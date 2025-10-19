@@ -1,8 +1,8 @@
 'use server';
 /**
- * @fileOverview Analyzes and corrects text for grammatical, spelling, and punctuation errors.
+ * @fileOverview Analyzes and corrects text for grammatical, spelling, and punctuation errors, and generates a feedback report.
  *
- * - analyzeAndCorrectText - A function that analyzes and corrects text.
+ * - analyzeAndCorrectText - A function that analyzes, corrects, and generates a report for the given text.
  * - AnalyzeAndCorrectTextInput - The input type for the analyzeAndCorrectText function.
  * - AnalyzeAndCorrectTextOutput - The return type for the analyzeAndCorrectText function.
  */
@@ -16,8 +16,14 @@ const AnalyzeAndCorrectTextInputSchema = z.object({
 export type AnalyzeAndCorrectTextInput = z.infer<typeof AnalyzeAndCorrectTextInputSchema>;
 
 const AnalyzeAndCorrectTextOutputSchema = z.object({
-  correctedText: z.string().describe('The corrected version of the text.'),
-  errorReport: z.string().describe('A comprehensive report detailing the percentage of errors and areas for improvement.'),
+  correctedText: z
+    .string()
+    .describe('The corrected version of the provided text.'),
+  errorReport: z
+    .string()
+    .describe(
+      'A comprehensive report detailing the percentage of errors and areas for improvement, with specific examples and suggestions.'
+    ),
 });
 export type AnalyzeAndCorrectTextOutput = z.infer<typeof AnalyzeAndCorrectTextOutputSchema>;
 
@@ -32,18 +38,20 @@ const analyzeAndCorrectTextPrompt = ai.definePrompt({
     schema: AnalyzeAndCorrectTextOutputSchema,
     format: 'json',
   },
-  prompt: `You are a highly skilled AI text analyzer and corrector. Your task is to analyze the given text for grammatical errors, spelling mistakes, and punctuation issues.
+  prompt: `You are a highly skilled AI writing assistant. Your task is to analyze the given text for grammatical errors, spelling mistakes, and punctuation issues.
 
-After analyzing the text, you must provide a corrected version of the text and a detailed report.
+Your response must be a valid JSON object.
 
-Your output MUST be a valid JSON object that adheres to the following schema:
-{
-  "correctedText": "The corrected version of the text.",
-  "errorReport": "A comprehensive report detailing the percentage of errors and areas for improvement."
-}
+First, provide a corrected version of the text.
 
-Text to analyze: {{{text}}}
-  `,
+Second, provide a comprehensive feedback report. This report should include:
+- The percentage of errors detected.
+- Specific examples of the errors found.
+- Tailored suggestions for how the user can improve their writing based on these errors.
+
+Here is the text to analyze:
+{{{text}}}
+`,
 });
 
 const analyzeAndCorrectTextFlow = ai.defineFlow(
