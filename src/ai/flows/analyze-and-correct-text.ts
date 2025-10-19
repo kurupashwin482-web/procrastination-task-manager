@@ -33,9 +33,11 @@ const analyzeAndCorrectTextPrompt = ai.definePrompt({
 
 After analyzing the text, you must provide a corrected version of the text and a detailed report.
 
-The output should be a JSON object with two keys:
-1.  'correctedText': This key should contain the corrected version of the input text.
-2.  'errorReport': This key should contain a detailed report that includes the percentage of errors detected and specific suggestions for improvement in punctuation, grammar, and spelling.
+Your output MUST be a valid JSON object with two keys:
+1.  "correctedText": This key must contain the corrected version of the input text.
+2.  "errorReport": This key must contain a detailed report that includes the percentage of errors detected and specific suggestions for improvement in punctuation, grammar, and spelling.
+
+Do not include any extra text or formatting outside of the JSON object.
 
 Text to analyze: {{{text}}}
   `,
