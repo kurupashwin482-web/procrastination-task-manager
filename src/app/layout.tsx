@@ -7,7 +7,7 @@ import { FirebaseClientProvider } from '@/firebase/client-provider';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'PrecisionWrite - To-Do List',
+  title: 'Procrastination... - To-Do List',
   description: 'Manage your tasks and boost your productivity.',
 };
 

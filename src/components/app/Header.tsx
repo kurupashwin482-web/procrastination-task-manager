@@ -50,7 +50,7 @@ export default function Header() {
           className="flex items-center gap-2 text-lg font-semibold md:text-base"
         >
           <ListTodo className="h-6 w-6 text-primary" />
-          <span className="font-bold">PrecisionWrite</span>
+          <span className="font-bold">Procrastination...</span>
         </a>
       </nav>
       <div className="flex w-full items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">

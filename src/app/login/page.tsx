@@ -73,7 +73,7 @@ export default function LoginPage() {
           </div>
           <CardTitle className="text-2xl font-bold">Welcome Back</CardTitle>
           <CardDescription>
-            Sign in to continue to PrecisionWrite.
+            Sign in to continue to Procrastination....
           </CardDescription>
         </CardHeader>
         <CardContent>

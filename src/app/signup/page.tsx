@@ -86,7 +86,7 @@ export default function SignUpPage() {
           </div>
           <CardTitle className="text-2xl font-bold">Create an Account</CardTitle>
           <CardDescription>
-            Join PrecisionWrite to manage your tasks.
+            Join Procrastination... to manage your tasks.
           </CardDescription>
         </CardHeader>
         <CardContent>
