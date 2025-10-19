@@ -67,6 +67,29 @@ const analyzeAndCorrectTextFlow = ai.defineFlow(
   },
   async input => {
     const {output} = await analyzeAndCorrectTextPrompt(input);
-    return output!;
+
+    if (output) {
+      return output;
+    }
+    
+    // Fallback for when the model doesn't return a valid JSON object
+    const {text: rawText} = await analyzeAndCorrectTextPrompt.generate({input: input});
+
+    try {
+      // Sometimes the model returns a markdown code block
+      const jsonText = rawText.replace(/```json\n/g, '').replace(/\n```/g, '');
+      const parsed = JSON.parse(jsonText);
+      return AnalyzeAndCorrectTextOutputSchema.parse(parsed);
+    } catch (e) {
+      console.error("Failed to parse AI response as JSON:", rawText);
+      // If parsing fails, try to extract fields manually as a last resort
+      const correctedTextMatch = rawText.match(/"correctedText"\s*:\s*"([^"]*)"/);
+      const errorReportMatch = rawText.match(/"errorReport"\s*:\s*"([^"]*)"/);
+      
+      return {
+        correctedText: correctedTextMatch ? correctedTextMatch[1] : "Could not determine correction.",
+        errorReport: errorReportMatch ? errorReportMatch[1] : "Could not generate report."
+      }
+    }
   }
 );
