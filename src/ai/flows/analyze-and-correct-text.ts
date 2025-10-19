@@ -37,6 +37,9 @@ const analyzeAndCorrectTextPrompt = ai.definePrompt({
   output: {
     schema: AnalyzeAndCorrectTextOutputSchema,
   },
+  config: {
+    format: 'json',
+  },
   prompt: `You are a highly skilled AI writing assistant. Your task is to analyze the given text for grammatical errors, spelling mistakes, and punctuation issues.
 
 You MUST respond with a valid JSON object that conforms to the output schema.
