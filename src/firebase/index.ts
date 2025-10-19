@@ -13,7 +13,7 @@ export function initializeFirebase() {
   // In the Firebase Studio development environment, the initializeApp()
   // function is patched to automatically configure the app with the currently
   // selected project.
-  const firebaseApp = getApps().length === 0 ? initializeApp() : getApp();
+  const firebaseApp = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
 
   const auth = getAuth(firebaseApp);
   const firestore = getFirestore(firebaseApp);
