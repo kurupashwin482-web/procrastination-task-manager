@@ -1,0 +1,78 @@
+/**
+ * @fileoverview Firestore Security Rules for the to-do list application.
+ *
+ * Core Philosophy:
+ * This ruleset enforces a strict user-ownership model for tasks. Each user can only access
+ * their own tasks, and no user can access or modify another user's tasks. User data itself is also
+ * protected, with only the authenticated user being able to read or write their own document.
+ *
+ * Data Structure:
+ * - /users/{userId}: Stores user profile information.
+ * - /users/{userId}/tasks/{taskId}: Stores tasks associated with a specific user.
+ *
+ * Key Security Decisions:
+ * - Users can only manage their own tasks, enforced by path-based ownership.
+ * - Users can only read or write their own user document.
+ * - Listing of all users is disallowed.
+ * - The rules prioritize authorization independence by ensuring ownership can be validated by the path itself.
+ *
+ * Denormalization for Authorization:
+ *  The authorization model relies on path-based ownership. The `userId` is encoded in the path
+ *  `/users/{userId}/tasks/{taskId}` and is checked against `request.auth.uid`. No denormalization is required
+ *  as the security rules can directly validate the path parameters against the authenticated user's ID.
+ */
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    /**
+     * @description Protects the /users collection, allowing only the authenticated user to manage their own user document.
+     * @path /users/{userId}
+     * @allow (get, create, update, delete) if the user ID in the path matches the authenticated user's ID.
+     * @deny (get, create, update, delete) if the user ID in the path does not match the authenticated user's ID.
+     * @principle Enforces document ownership for writes.
+     */
+    match /users/{userId} {
+      function isOwner(userId) {
+        return request.auth.uid == userId;
+      }
+
+      function isSignedIn() {
+        return request.auth != null;
+      }
+
+      allow get: if isOwner(userId);
+      allow list: if false;
+      allow create: if isSignedIn() && isOwner(userId);
+      allow update: if isSignedIn() && isOwner(userId);
+      allow delete: if isSignedIn() && isOwner(userId);
+    }
+
+    /**
+     * @description Protects the /users/{userId}/tasks collection, allowing only the owner to manage their tasks.
+     * @path /users/{userId}/tasks/{taskId}
+     * @allow (create, update, delete) if the user ID in the path matches the authenticated user's ID.
+     * @deny (create, update, delete) if the user ID in the path does not match the authenticated user's ID.
+     * @principle Enforces document ownership for writes and restricts access to a user's own data tree.
+     */
+    match /users/{userId}/tasks/{taskId} {
+      function isOwner(userId) {
+        return request.auth.uid == userId;
+      }
+
+      function isExistingOwner(userId) {
+        return isOwner(userId) && resource != null;
+      }
+
+      function isSignedIn() {
+        return request.auth != null;
+      }
+
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isSignedIn() && isOwner(userId) && request.resource.data.userId == userId;
+      allow update: if isExistingOwner(userId) && request.resource.data.userId == resource.data.userId;
+      allow delete: if isExistingOwner(userId);
+    }
+  }
+}
