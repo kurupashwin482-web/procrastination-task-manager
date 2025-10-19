@@ -20,7 +20,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { cn } from '@/lib/utils';
-import { isPast, isToday, format } from 'date-fns';
+import { isPast, isToday, format, isValid } from 'date-fns';
 
 interface TaskItemProps {
   task: Task;
@@ -80,7 +80,8 @@ export default function TaskItem({ task }: TaskItemProps) {
   };
 
   const taskDate = new Date(task.date);
-  const isTaskPast = isPast(taskDate) && !isToday(taskDate);
+  const isDateValid = isValid(taskDate);
+  const isTaskPast = isDateValid && isPast(taskDate) && !isToday(taskDate);
 
   return (
     <Card className={cn(
@@ -134,10 +135,12 @@ export default function TaskItem({ task }: TaskItemProps) {
       </CardHeader>
       <CardContent className="flex items-center justify-between pt-0">
         <div className="flex items-center gap-4 text-sm text-muted-foreground">
-          <div className="flex items-center gap-1">
-            <CalendarIcon className="h-4 w-4" />
-            <span>{format(new Date(task.date), 'PPP')}</span>
-          </div>
+          {isDateValid && (
+            <div className="flex items-center gap-1">
+              <CalendarIcon className="h-4 w-4" />
+              <span>{format(taskDate, 'PPP')}</span>
+            </div>
+          )}
           {task.time && (
              <div className="flex items-center gap-1">
                 <ClockIcon className="h-4 w-4" />
