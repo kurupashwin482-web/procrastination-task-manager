@@ -55,79 +55,59 @@
         "time": {
           "type": "string",
           "description": "Time at which the task is scheduled.",
-          "format": "date-time"
+          "format": "time"
         },
         "date": {
           "type": "string",
           "description": "Date for which the task is scheduled.",
-          "format": "date-time"
+          "format": "date"
         },
         "difficulty": {
           "type": "string",
-          "description": "Difficulty level of the task (easy, medium, complex)."
+          "description": "Difficulty level of the task (easy, medium, complex).",
+          "enum": ["easy", "medium", "complex"]
         },
         "completed": {
           "type": "boolean",
           "description": "Indicates whether the task is completed."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp when the task was created."
         }
       },
       "required": [
-        "id",
         "userId",
         "title",
-        "description",
-        "time",
         "date",
         "difficulty",
-        "completed"
+        "completed",
+        "createdAt"
       ]
     }
   },
   "auth": {
     "providers": [
-      "password",
-      "anonymous"
+      "password"
     ]
   },
   "firestore": {
-    "structure": [
+    "collections": [
       {
         "path": "/users/{userId}",
-        "definition": {
-          "entityName": "User",
-          "schema": {
-            "$ref": "#/backend/entities/User"
-          },
-          "description": "Collection for storing user data. Each document represents a user.",
-          "params": [
-            {
-              "name": "userId",
-              "description": "The unique identifier for the user."
-            }
-          ]
-        }
+        "schema": {
+          "$ref": "#/entities/User"
+        },
+        "description": "Stores user profile information, including their total points."
       },
       {
-        "path": "/users/{userId}/tasks/{taskId}",
-        "definition": {
-          "entityName": "Task",
-          "schema": {
-            "$ref": "#/backend/entities/Task"
-          },
-          "description": "Subcollection for storing tasks associated with a specific user. Enforces path-based ownership, ensuring only the authenticated user can access their tasks.",
-          "params": [
-            {
-              "name": "userId",
-              "description": "The unique identifier for the user."
-            },
-            {
-              "name": "taskId",
-              "description": "The unique identifier for the task."
-            }
-          ]
-        }
+        "path": "/users/{userId}/tasks",
+        "schema": {
+          "$ref": "#/entities/Task"
+        },
+        "description": "Subcollection for storing tasks associated with a specific user."
       }
-    ],
-    "reasoning": "The Firestore data structure is designed to support the to-do list application, focusing on user-specific task management. The core structure revolves around the `users/{userId}/tasks/{taskId}` path, which enforces path-based ownership, ensuring that only the authenticated user can access their tasks. This design prioritizes Authorization Independence (CRITICAL) by eliminating the need for `get()` calls in security rules, as ownership is inherently defined by the path itself. It adheres to Structural Segregation (Homogeneous Security Posture) since each task document within a user's collection has the same security requirements. The design also promotes Data Clarity and Predictability by using explicit state modeling with the `completed` boolean and standard naming conventions. The structure supports required QAPs (Rules are not Filters) by ensuring secure `list` operations, as listing tasks is always scoped to a specific user ID, which is validated against the authenticated user's ID."
+    ]
   }
 }
