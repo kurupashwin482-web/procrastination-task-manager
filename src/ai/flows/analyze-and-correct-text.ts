@@ -36,21 +36,23 @@ const analyzeAndCorrectTextPrompt = ai.definePrompt({
   input: {schema: AnalyzeAndCorrectTextInputSchema},
   output: {
     schema: AnalyzeAndCorrectTextOutputSchema,
-    format: 'json',
   },
   prompt: `You are a highly skilled AI writing assistant. Your task is to analyze the given text for grammatical errors, spelling mistakes, and punctuation issues.
 
-Your response must be a valid JSON object.
+You MUST respond with a valid JSON object that conforms to the output schema.
 
-First, provide a corrected version of the text.
+The JSON object must have two keys: "correctedText" and "errorReport".
 
-Second, provide a comprehensive feedback report. This report should include:
-- The percentage of errors detected.
-- Specific examples of the errors found.
-- Tailored suggestions for how the user can improve their writing based on these errors.
+1.  **correctedText**: Provide a corrected version of the text.
+2.  **errorReport**: Provide a comprehensive feedback report. This report should include:
+    - An estimated percentage of errors detected.
+    - Specific examples of the errors found.
+    - Tailored suggestions for how the user can improve their writing based on these errors.
 
-Here is the text to analyze:
+Analyze the following text:
+\`\`\`
 {{{text}}}
+\`\`\`
 `,
 });
 
