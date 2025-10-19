@@ -37,7 +37,7 @@ Your output MUST be a valid JSON object with two keys:
 1.  "correctedText": This key must contain the corrected version of the input text.
 2.  "errorReport": This key must contain a detailed report that includes the percentage of errors detected and specific suggestions for improvement in punctuation, grammar, and spelling.
 
-Do not include any extra text or formatting outside of the JSON object.
+ONLY output the JSON object. Do not include any other text, markdown, or formatting.
 
 Text to analyze: {{{text}}}
   `,
