@@ -1,4 +1,5 @@
+
 import { config } from 'dotenv';
 config();
 
-import '@/ai/flows/analyze-and-correct-text.ts';
+import '@/ai/flows/generate-greeting.ts';
