@@ -1,0 +1,53 @@
+'use server';
+/**
+ * @fileOverview Analyzes and corrects text for grammatical, spelling, and punctuation errors.
+ *
+ * - analyzeAndCorrectText - A function that analyzes and corrects text.
+ * - AnalyzeAndCorrectTextInput - The input type for the analyzeAndCorrectText function.
+ * - AnalyzeAndCorrectTextOutput - The return type for the analyzeAndCorrectText function.
+ */
+
+import {ai} from '@/ai/genkit';
+import {z} from 'genkit';
+
+const AnalyzeAndCorrectTextInputSchema = z.object({
+  text: z.string().describe('The text to analyze and correct.'),
+});
+export type AnalyzeAndCorrectTextInput = z.infer<typeof AnalyzeAndCorrectTextInputSchema>;
+
+const AnalyzeAndCorrectTextOutputSchema = z.object({
+  correctedText: z.string().describe('The corrected version of the text.'),
+  errorReport: z.string().describe('A comprehensive report detailing the percentage of errors and areas for improvement.'),
+});
+export type AnalyzeAndCorrectTextOutput = z.infer<typeof AnalyzeAndCorrectTextOutputSchema>;
+
+export async function analyzeAndCorrectText(input: AnalyzeAndCorrectTextInput): Promise<AnalyzeAndCorrectTextOutput> {
+  return analyzeAndCorrectTextFlow(input);
+}
+
+const analyzeAndCorrectTextPrompt = ai.definePrompt({
+  name: 'analyzeAndCorrectTextPrompt',
+  input: {schema: AnalyzeAndCorrectTextInputSchema},
+  output: {schema: AnalyzeAndCorrectTextOutputSchema},
+  prompt: `You are a highly skilled AI text analyzer and corrector. Your task is to analyze the given text for grammatical errors, spelling mistakes, and punctuation issues.
+
+  After analyzing the text, provide a corrected version of the text and a detailed report that includes the percentage of errors detected and specific suggestions for improvement in punctuation, grammar, and spelling.
+
+  Text to analyze: {{{text}}}
+
+  Ensure the correctedText output contains the corrected version of the input text.
+  Ensure the errorReport output contains detailed feedback, including the percentage of errors and specific suggestions for improvement.
+  `,
+});
+
+const analyzeAndCorrectTextFlow = ai.defineFlow(
+  {
+    name: 'analyzeAndCorrectTextFlow',
+    inputSchema: AnalyzeAndCorrectTextInputSchema,
+    outputSchema: AnalyzeAndCorrectTextOutputSchema,
+  },
+  async input => {
+    const {output} = await analyzeAndCorrectTextPrompt(input);
+    return output!;
+  }
+);
