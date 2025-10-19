@@ -28,7 +28,10 @@ export async function analyzeAndCorrectText(input: AnalyzeAndCorrectTextInput): 
 const analyzeAndCorrectTextPrompt = ai.definePrompt({
   name: 'analyzeAndCorrectTextPrompt',
   input: {schema: AnalyzeAndCorrectTextInputSchema},
-  output: {schema: AnalyzeAndCorrectTextOutputSchema},
+  output: {
+    schema: AnalyzeAndCorrectTextOutputSchema,
+    format: 'json',
+  },
   prompt: `You are a highly skilled AI text analyzer and corrector. Your task is to analyze the given text for grammatical errors, spelling mistakes, and punctuation issues.
 
 After analyzing the text, you must provide a corrected version of the text and a detailed report.
@@ -36,8 +39,6 @@ After analyzing the text, you must provide a corrected version of the text and a
 Your output MUST be a valid JSON object with two keys:
 1.  "correctedText": This key must contain the corrected version of the input text.
 2.  "errorReport": This key must contain a detailed report that includes the percentage of errors detected and specific suggestions for improvement in punctuation, grammar, and spelling.
-
-ONLY output the JSON object. Do not include any other text, markdown, or formatting.
 
 Text to analyze: {{{text}}}
   `,
