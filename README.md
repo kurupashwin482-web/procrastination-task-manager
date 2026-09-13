@@ -5,7 +5,7 @@ organize their tasks, meet deadlines, and stay motivated.
 
 ## 🚀 Live Demo
 
-[Open the application](https://studio-ashy-ten.vercel.app/dashboard#)
+[Open the application](https://studio-ashy-ten.vercel.app/login)
 
 ## ✨ Features
 
